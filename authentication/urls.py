@@ -15,4 +15,6 @@ urlpatterns = [
     path('projects/', views.list_projects, name='list_projects'),
     path('projects/<int:project_id>/staff/', views.get_project_staff, name='get_project_staff'),
     path('projects/<int:project_id>/', views.delete_project, name='delete_project'),
+    path('api/chatbot/', views.chatbot_api, name='chatbot_api'),
+
 ] 

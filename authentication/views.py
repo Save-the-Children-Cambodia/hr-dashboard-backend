@@ -8,7 +8,35 @@ from .models import User, Staff, Notification, Project, ProjectStaff
 from django.core.exceptions import ObjectDoesNotExist
 from .serializers import StaffSerializer, ProjectSerializer, ProjectStaffSerializer
 import pandas as pd
-from rest_framework.parsers import MultiPartParser
+from langchain_ollama import ChatOllama
+
+OLLAMA_API_URL = "http://localhost:11434/api/chat"
+MODEL_NAME = "llama3.2"
+
+@api_view(["POST"])
+def chatbot_api(request):
+    """
+    Relay the message to Ollama and return the response.
+    """
+    user_message = request.data.get("message", "")
+    if not user_message:
+        return Response({"error": "Message is required"}, status=400)
+
+    try:
+        # Send the user message to Ollama
+        response = requests.post(
+            OLLAMA_API_URL,
+            json={"model": MODEL_NAME, "prompt": user_message},
+        )
+        response.raise_for_status()  # Raise an error for bad responses
+        data = response.json()
+
+        # Return Ollama's response to the frontend
+        return Response({"response": data.get("response", "No response from model")})
+
+    except requests.exceptions.RequestException as e:
+        return Response({"error": f"Failed to connect to Ollama: {str(e)}"}, status=500)
+
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
