@@ -21,4 +21,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('authentication/', include('authentication.urls')),
     path('api/', include('authentication.urls')),
+    #added for task matching
+    path("admin/", admin.site.urls),
+    path("api/", include("tasks.urls")),
 ]
